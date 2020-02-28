@@ -7,11 +7,16 @@ import org.bukkit.entity.Player;
 public class ItemManager {
 
   private DummyMenu menu;
+  private FileConfiguration configuration;
 
   public ItemManager(FileConfiguration config) {
+    this.configuration = config;
+  }
+
+  public void initializeMenu() {
     menu = new DummyMenu("dummyitems");
     menu.setPermission(Main.PERMISSION);
-    menu.setFromFile(config);
+    menu.setFromFile(configuration);
   }
 
   public void createMenu(Player player) {

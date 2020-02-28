@@ -69,6 +69,11 @@ public final class Main extends Addon {
   }
 
   @Override
+  public void onPostEnable() {
+    itemManager.initializeMenu();
+  }
+
+  @Override
   public void onDisable() {
     unregisterCommand(command);
   }

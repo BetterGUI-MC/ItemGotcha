@@ -1,6 +1,5 @@
 package me.hsgamer.bettergui.itemgotcha;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +51,8 @@ public class ItemRequirement extends IconRequirement<Object, List<RequiredItem>>
     if (icons.containsKey(split1[0])) {
       RequiredItem requiredItem = new RequiredItem(player, icons.get(split1[0]), oldCheck);
       if (split1.length > 1) {
-        Optional<BigDecimal> amount = Validate.getNumber(split1[1]);
-        amount.ifPresent(number -> requiredItem.setAmount(number.intValue()));
+        Validate.getNumber(split1[1].trim())
+            .ifPresent(number -> requiredItem.setAmount(number.intValue()));
       }
       return Optional.of(requiredItem);
     } else {

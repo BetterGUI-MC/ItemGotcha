@@ -2,6 +2,7 @@ package me.hsgamer.bettergui.itemgotcha;
 
 import static me.hsgamer.bettergui.BetterGUI.getInstance;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -17,30 +18,39 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemCommand extends Command {
 
+  private Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
+
   public ItemCommand(String command) {
     super(command);
   }
 
   private ItemStack getItemStack(Player player, String input) {
-    Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
-    if (icons.containsKey(input)) {
-      return icons.get(input).createClickableItem(player).get().getItem();
+    int amount = 0;
+    String[] split = input.split(",", 2);
+    String item = split[0].trim();
+
+    if (split.length > 1) {
+      Optional<BigDecimal> optional = Validate.getNumber(split[1]);
+      if (optional.isPresent()) {
+        amount = optional.get().intValue();
+      } else {
+        CommonUtils.sendMessage(player,
+            getInstance().getMessageConfig().get(DefaultMessage.INVALID_NUMBER)
+                .replace("{input}", split[1]));
+      }
+    }
+
+    if (icons.containsKey(item)) {
+      ItemStack itemStack = icons.get(item).createClickableItem(player).get().getItem();
+      if (amount > 0) {
+        itemStack.setAmount(amount);
+      }
+      return itemStack;
     } else {
-      String[] split = input.split(",", 2);
-      Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(split[0].trim());
-      int amount = 1;
+      Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(item);
       if (xMaterial.isPresent()) {
-        if (split.length >= 2) {
-          String rawInt = split[1].trim();
-          if (Validate.isValidInteger(rawInt)) {
-            amount = Integer.parseInt(rawInt);
-          } else {
-            CommonUtils.sendMessage(player,
-                getInstance().getMessageConfig().get(DefaultMessage.INVALID_NUMBER)
-                    .replace("{input}", rawInt));
-          }
-        }
         ItemStack itemStack = xMaterial.get().parseItem();
+        amount = amount > 0 ? amount : 1;
         if (itemStack != null) {
           itemStack.setAmount(amount);
           return itemStack;

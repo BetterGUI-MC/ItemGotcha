@@ -1,8 +1,10 @@
 package me.hsgamer.bettergui.itemgotcha;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import me.hsgamer.bettergui.itemgotcha.ItemRequirement.RequiredItem;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
 import me.hsgamer.bettergui.object.Icon;
@@ -11,11 +13,13 @@ import me.hsgamer.bettergui.object.icon.DummyIcon;
 import me.hsgamer.bettergui.object.property.item.ItemProperty;
 import me.hsgamer.bettergui.object.property.item.impl.Amount;
 import me.hsgamer.bettergui.util.CommonUtils;
-import me.hsgamer.bettergui.util.TestCase;
+import me.hsgamer.bettergui.util.Validate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemRequirement extends IconRequirement<Object, List<RequiredItem>> {
+
+  private Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
 
   public ItemRequirement(Icon icon) {
     super(icon, true);
@@ -24,34 +28,44 @@ public class ItemRequirement extends IconRequirement<Object, List<RequiredItem>>
   @Override
   public List<RequiredItem> getParsedValue(Player player) {
     List<RequiredItem> list = new ArrayList<>();
-    Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
-
-    TestCase<String[]> testCase = new TestCase<String[]>()
-        .setPredicate(strings -> icons.containsKey(strings[0].trim()))
-        .setBeforeTestOperator(strings -> {
-          strings[0] = strings[0].trim();
-          return strings;
-        })
-        .setSuccessNextTestCase(new TestCase<String[]>()
-            .setPredicate(strings -> strings.length == 2)
-            .setSuccessConsumer(strings -> list.add(new RequiredItem(icons.get(strings[0]),
-                Boolean.parseBoolean(strings[1].trim()))))
-            .setFailConsumer(
-                strings -> list.add(new RequiredItem(icons.get(strings[0]), true))))
-        .setFailConsumer(strings -> CommonUtils.sendMessage(player, Main.getFailMessage()));
-    for (String s : CommonUtils.createStringListFromObject(value)) {
-      String[] split = s.split(":", 2);
-      testCase.setTestObject(split).test();
+    for (String s : CommonUtils.createStringListFromObject(value, true)) {
+      Optional<RequiredItem> optional = getRequiredItem(s, player);
+      if (optional.isPresent()) {
+        list.add(optional.get());
+      } else {
+        CommonUtils.sendMessage(player, Main.getFailMessage());
+      }
     }
     return list;
+  }
+
+  private Optional<RequiredItem> getRequiredItem(String input, Player player) {
+    boolean oldCheck = true;
+    String[] split = input.split(":", 2);
+    String item = split[0].trim();
+    if (split.length > 1) {
+      oldCheck = Boolean.parseBoolean(split[1].trim());
+    }
+
+    String[] split1 = item.split(",", 2);
+    split1[0] = split1[0].trim();
+    if (icons.containsKey(split1[0])) {
+      RequiredItem requiredItem = new RequiredItem(player, icons.get(split1[0]), oldCheck);
+      if (split1.length > 1) {
+        Optional<BigDecimal> amount = Validate.getNumber(split1[1]);
+        amount.ifPresent(number -> requiredItem.setAmount(number.intValue()));
+      }
+      return Optional.of(requiredItem);
+    } else {
+      return Optional.empty();
+    }
   }
 
   @Override
   public boolean check(Player player) {
     for (RequiredItem requiredItem : getParsedValue(player)) {
       DummyIcon dummyIcon = requiredItem.icon;
-      ItemStack itemStack = dummyIcon.createClickableItem(player).get().getItem();
-      int amountNeeded = itemStack.getAmount();
+      int amountNeeded = requiredItem.amount;
       int amountFound = 0;
       for (ItemStack item : player.getInventory().getContents()) {
         if (checkItem(player, dummyIcon, item, requiredItem.oldCheck)) {
@@ -71,7 +85,7 @@ public class ItemRequirement extends IconRequirement<Object, List<RequiredItem>>
     for (RequiredItem requiredItem : getParsedValue(player)) {
       DummyIcon dummyIcon = requiredItem.icon;
       ItemStack[] contents = player.getInventory().getContents();
-      int amountNeeded = dummyIcon.createClickableItem(player).get().getItem().getAmount();
+      int amountNeeded = requiredItem.amount;
       for (int i = 0; i < contents.length; i++) {
         ItemStack item = contents[i];
         if (checkItem(player, dummyIcon, item, requiredItem.oldCheck)) {
@@ -109,14 +123,20 @@ public class ItemRequirement extends IconRequirement<Object, List<RequiredItem>>
     }
   }
 
-  static class RequiredItem {
+  protected static class RequiredItem {
 
-    final DummyIcon icon;
-    final boolean oldCheck;
+    private final DummyIcon icon;
+    private final boolean oldCheck;
+    private int amount;
 
-    RequiredItem(DummyIcon icon, boolean oldCheck) {
+    RequiredItem(Player player, DummyIcon icon, boolean oldCheck) {
       this.icon = icon;
+      this.amount = icon.createClickableItem(player).get().getItem().getAmount();
       this.oldCheck = oldCheck;
+    }
+
+    public void setAmount(int amount) {
+      this.amount = amount;
     }
   }
 }

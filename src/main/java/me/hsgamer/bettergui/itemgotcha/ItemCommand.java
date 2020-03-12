@@ -30,7 +30,7 @@ public class ItemCommand extends Command {
     String item = split[0].trim();
 
     if (split.length > 1) {
-      Optional<BigDecimal> optional = Validate.getNumber(split[1]);
+      Optional<BigDecimal> optional = Validate.getNumber(split[1].trim());
       if (optional.isPresent()) {
         amount = optional.get().intValue();
       } else {

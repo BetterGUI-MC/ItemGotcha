@@ -72,7 +72,6 @@ public class ItemRequirement extends IconRequirement<Object, List<RequiredItem>>
         }
       }
       if (amountFound < amountNeeded) {
-        sendFailCommand(player);
         return false;
       }
     }

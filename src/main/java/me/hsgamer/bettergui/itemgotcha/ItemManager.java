@@ -20,7 +20,7 @@ public class ItemManager {
   }
 
   public void createMenu(Player player) {
-    menu.createInventory(player);
+    menu.createInventory(player, false);
   }
 
   public DummyMenu getMenu() {

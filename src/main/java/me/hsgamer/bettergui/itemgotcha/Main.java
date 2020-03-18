@@ -74,6 +74,12 @@ public final class Main extends Addon {
   }
 
   @Override
+  public void onReload() {
+    reloadConfig();
+    itemManager.initializeMenu();
+  }
+
+  @Override
   public void onDisable() {
     unregisterCommand(command);
   }

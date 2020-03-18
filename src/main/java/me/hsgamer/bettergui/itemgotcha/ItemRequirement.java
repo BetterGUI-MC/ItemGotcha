@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import me.hsgamer.bettergui.itemgotcha.ItemRequirement.RequiredItem;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
-import me.hsgamer.bettergui.object.Icon;
-import me.hsgamer.bettergui.object.IconRequirement;
+import me.hsgamer.bettergui.object.Requirement;
 import me.hsgamer.bettergui.object.icon.DummyIcon;
 import me.hsgamer.bettergui.object.property.item.ItemProperty;
 import me.hsgamer.bettergui.object.property.item.impl.Amount;
@@ -16,12 +15,12 @@ import me.hsgamer.bettergui.util.Validate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class ItemRequirement extends IconRequirement<Object, List<RequiredItem>> {
+public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
 
   private Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
 
-  public ItemRequirement(Icon icon) {
-    super(icon, true);
+  public ItemRequirement() {
+    super(true);
   }
 
   @Override

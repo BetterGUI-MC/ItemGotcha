@@ -44,8 +44,7 @@ public final class Main extends Addon {
   @Override
   public void onEnable() {
     itemManager = new ItemManager(getConfig());
-    failMessage = getPlugin().getMessageConfig().get(String.class, "invalid-item",
-        "&cUnable to get required item. Inform the staff");
+    setFailMessage();
 
     RequirementBuilder.register("item", ItemRequirement.class);
     CommandBuilder.register("give:", ItemCommand.class);
@@ -68,6 +67,11 @@ public final class Main extends Addon {
     registerCommand(command);
   }
 
+  private void setFailMessage() {
+    failMessage = getPlugin().getMessageConfig().get(String.class, "invalid-item",
+        "&cUnable to get required item. Inform the staff");
+  }
+
   @Override
   public void onPostEnable() {
     itemManager.initializeMenu();
@@ -76,6 +80,7 @@ public final class Main extends Addon {
   @Override
   public void onReload() {
     reloadConfig();
+    setFailMessage();
     itemManager.initializeMenu();
   }
 

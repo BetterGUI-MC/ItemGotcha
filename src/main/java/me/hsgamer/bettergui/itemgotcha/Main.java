@@ -43,7 +43,7 @@ public final class Main extends Addon {
 
   @Override
   public void onEnable() {
-    itemManager = new ItemManager(getConfig());
+    itemManager = new ItemManager(this);
     setFailMessage();
 
     RequirementBuilder.register("item", ItemRequirement.class);
@@ -81,7 +81,7 @@ public final class Main extends Addon {
   public void onReload() {
     reloadConfig();
     setFailMessage();
-    itemManager.initializeMenu();
+    itemManager.reload();
   }
 
   @Override

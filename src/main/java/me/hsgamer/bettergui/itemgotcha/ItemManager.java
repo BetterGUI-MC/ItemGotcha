@@ -1,16 +1,19 @@
 package me.hsgamer.bettergui.itemgotcha;
 
+import me.hsgamer.bettergui.object.addon.Addon;
 import me.hsgamer.bettergui.object.menu.DummyMenu;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class ItemManager {
 
+  private Addon addon;
   private DummyMenu menu;
   private FileConfiguration configuration;
 
-  public ItemManager(FileConfiguration config) {
-    this.configuration = config;
+  public ItemManager(Addon addon) {
+    this.addon = addon;
+    this.configuration = addon.getConfig();
   }
 
   public void initializeMenu() {
@@ -21,6 +24,11 @@ public class ItemManager {
 
   public void createMenu(Player player) {
     menu.createInventory(player, false);
+  }
+
+  public void reload() {
+    this.configuration = addon.getConfig();
+    initializeMenu();
   }
 
   public DummyMenu getMenu() {

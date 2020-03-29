@@ -22,7 +22,6 @@ public final class Main extends Addon {
           PermissionDefault.OP);
   private static ItemManager itemManager;
   private static String failMessage;
-  private BukkitCommand command;
 
   public static ItemManager getItemManager() {
     return itemManager;
@@ -49,7 +48,7 @@ public final class Main extends Addon {
     RequirementBuilder.register("item", ItemRequirement.class);
     CommandBuilder.register("give:", ItemCommand.class);
 
-    command = new BukkitCommand("items",
+    registerCommand(new BukkitCommand("items",
         "Open the inventory that contains all items from items.yml", "/items",
         new ArrayList<>()) {
       private TestCase<CommandSender> testCase = new TestCase<CommandSender>()
@@ -63,8 +62,7 @@ public final class Main extends Addon {
       public boolean execute(CommandSender commandSender, String s, String[] strings) {
         return testCase.setTestObject(commandSender).test();
       }
-    };
-    registerCommand(command);
+    });
   }
 
   private void setFailMessage() {
@@ -82,10 +80,5 @@ public final class Main extends Addon {
     reloadConfig();
     setFailMessage();
     itemManager.reload();
-  }
-
-  @Override
-  public void onDisable() {
-    unregisterCommand(command);
   }
 }

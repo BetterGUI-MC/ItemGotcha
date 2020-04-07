@@ -28,7 +28,12 @@ public class ItemManager {
 
   public void reload() {
     this.configuration = addon.getConfig();
+    closeMenu();
     initializeMenu();
+  }
+
+  public void closeMenu() {
+    menu.closeAll();
   }
 
   public DummyMenu getMenu() {

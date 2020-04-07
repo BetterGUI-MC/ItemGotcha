@@ -16,6 +16,7 @@ Commands and Requirements related to Item
 | Command | Permission | Description |
 | --- | --- | --- |
 | `items` | bettergui.items | Open the inventory that contains all items from config.yml |
+| `giveitem` | bettergui.items | Give an item to the player |
 ***
 ## Command Type
 | Command | Description | Argument | Example |

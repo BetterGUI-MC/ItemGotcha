@@ -5,9 +5,9 @@ import me.hsgamer.bettergui.object.menu.DummyMenu;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-public class ItemManager {
+public final class ItemManager {
 
-  private Addon addon;
+  private final Addon addon;
   private DummyMenu menu;
   private FileConfiguration configuration;
 

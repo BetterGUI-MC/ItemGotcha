@@ -55,7 +55,7 @@ public final class Main extends Addon {
     registerCommand(new BukkitCommand("items",
         "Open the inventory that contains all items from items.yml", "/items",
         new ArrayList<>()) {
-      private TestCase<CommandSender> testCase = new TestCase<CommandSender>()
+      private final TestCase<CommandSender> testCase = new TestCase<CommandSender>()
           .setPredicate(sender -> sender instanceof Player)
           .setSuccessConsumer(
               sender -> itemManager.createMenu((Player) sender))

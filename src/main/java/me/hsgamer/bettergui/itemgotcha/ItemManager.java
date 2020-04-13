@@ -23,7 +23,7 @@ public final class ItemManager {
   }
 
   public void createMenu(Player player) {
-    menu.createInventory(player, false);
+    menu.createInventory(player, new String[0], false);
   }
 
   public void reload() {

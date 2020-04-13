@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemCommand extends Command {
 
-  private Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
+  private final Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
 
   public ItemCommand(String command) {
     super(command);

@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
 
-  private Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
+  private final Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
 
   public ItemRequirement() {
     super(true);

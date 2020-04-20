@@ -9,7 +9,6 @@ import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
 import me.hsgamer.bettergui.object.addon.Addon;
 import me.hsgamer.bettergui.object.icon.DummyIcon;
 import me.hsgamer.bettergui.util.CommonUtils;
-import me.hsgamer.bettergui.util.TestCase;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
@@ -55,16 +54,15 @@ public final class Main extends Addon {
     registerCommand(new BukkitCommand("items",
         "Open the inventory that contains all items from items.yml", "/items",
         new ArrayList<>()) {
-      private final TestCase<CommandSender> testCase = new TestCase<CommandSender>()
-          .setPredicate(sender -> sender instanceof Player)
-          .setSuccessConsumer(
-              sender -> itemManager.createMenu((Player) sender))
-          .setFailConsumer(sender -> CommonUtils.sendMessage(sender,
-              getPlugin().getMessageConfig().get(DefaultMessage.PLAYER_ONLY)));
-
       @Override
       public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        return testCase.setTestObject(commandSender).test();
+        if (!(commandSender instanceof Player)) {
+          CommonUtils.sendMessage(commandSender,
+              getPlugin().getMessageConfig().get(DefaultMessage.PLAYER_ONLY));
+          return false;
+        }
+        itemManager.createMenu((Player) commandSender);
+        return true;
       }
     });
     registerCommand(new BukkitCommand("giveitem",
@@ -72,31 +70,31 @@ public final class Main extends Addon {
         new ArrayList<>()) {
       @Override
       public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        return TestCase.create(commandSender)
-            .setPredicate(sender -> sender instanceof Player)
-            .setFailConsumer(sender -> CommonUtils.sendMessage(sender,
-                getPlugin().getMessageConfig().get(DefaultMessage.PLAYER_ONLY)))
-            .setSuccessNextTestCase(new TestCase<CommandSender>()
-                .setPredicate(sender -> sender.hasPermission(PERMISSION))
-                .setFailConsumer(sender -> CommonUtils.sendMessage(sender,
-                    getPlugin().getMessageConfig().get(DefaultMessage.NO_PERMISSION)))
-                .setSuccessConsumer(sender -> {
-                  if (strings.length > 0) {
-                    DummyIcon icon = itemManager.getMenu().getIcons().get(strings[0]);
-                    if (icon != null) {
-                      ((Player) sender).getInventory().addItem(icon.createClickableItem(
-                          (Player) sender).get().getItem());
-                      CommonUtils.sendMessage(sender,
-                          getPlugin().getMessageConfig().get(DefaultMessage.SUCCESS));
-                    } else {
-                      CommonUtils.sendMessage(sender, failMessage);
-                    }
-                  } else {
-                    CommonUtils.sendMessage(sender, requiredMessage);
-                  }
-                })
-            )
-            .test();
+        if (!(commandSender instanceof Player)) {
+          CommonUtils.sendMessage(commandSender,
+              getPlugin().getMessageConfig().get(DefaultMessage.PLAYER_ONLY));
+          return false;
+        }
+        if (!commandSender.hasPermission(PERMISSION)) {
+          CommonUtils.sendMessage(commandSender,
+              getPlugin().getMessageConfig().get(DefaultMessage.NO_PERMISSION));
+          return false;
+        }
+        if (strings.length <= 0) {
+          CommonUtils.sendMessage(commandSender, requiredMessage);
+          return false;
+        }
+        DummyIcon icon = itemManager.getMenu().getIcons().get(strings[0]);
+        if (icon != null) {
+          ((Player) commandSender).getInventory().addItem(icon.createClickableItem(
+              (Player) commandSender).get().getItem());
+          CommonUtils.sendMessage(commandSender,
+              getPlugin().getMessageConfig().get(DefaultMessage.SUCCESS));
+        } else {
+          CommonUtils.sendMessage(commandSender, failMessage);
+          return false;
+        }
+        return true;
       }
     });
   }

@@ -78,24 +78,26 @@ public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
 
   @Override
   public void take(Player player) {
-    for (RequiredItem requiredItem : getParsedValue(player)) {
-      DummyIcon dummyIcon = requiredItem.getIcon();
-      ItemStack[] contents = player.getInventory().getContents();
-      int amountNeeded = requiredItem.getAmount();
-      for (int i = 0; i < contents.length; i++) {
-        ItemStack item = contents[i];
-        if (checkItem(player, dummyIcon, item, requiredItem.isOldCheck())) {
-          if (item.getAmount() > amountNeeded) {
-            item.setAmount(item.getAmount() - amountNeeded);
-            return;
-          } else {
-            amountNeeded -= item.getAmount();
-            player.getInventory().setItem(i, XMaterial.AIR.parseItem());
-          }
-        }
-        if (amountNeeded <= 0) {
+    getParsedValue(player).forEach(requiredItem -> takeSingle(player, requiredItem));
+  }
+
+  private void takeSingle(Player player, RequiredItem requiredItem) {
+    DummyIcon dummyIcon = requiredItem.getIcon();
+    ItemStack[] contents = player.getInventory().getContents();
+    int amountNeeded = requiredItem.getAmount();
+    for (int i = 0; i < contents.length; i++) {
+      ItemStack item = contents[i];
+      if (checkItem(player, dummyIcon, item, requiredItem.isOldCheck())) {
+        if (item.getAmount() > amountNeeded) {
+          item.setAmount(item.getAmount() - amountNeeded);
           return;
+        } else {
+          amountNeeded -= item.getAmount();
+          player.getInventory().setItem(i, XMaterial.AIR.parseItem());
         }
+      }
+      if (amountNeeded <= 0) {
+        return;
       }
     }
   }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import me.hsgamer.bettergui.itemgotcha.ItemRequirement.RequiredItem;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
 import me.hsgamer.bettergui.object.Requirement;
 import me.hsgamer.bettergui.object.icon.DummyIcon;
@@ -62,11 +61,11 @@ public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
   @Override
   public boolean check(Player player) {
     for (RequiredItem requiredItem : getParsedValue(player)) {
-      DummyIcon dummyIcon = requiredItem.icon;
-      int amountNeeded = requiredItem.amount;
+      DummyIcon dummyIcon = requiredItem.getIcon();
+      int amountNeeded = requiredItem.getAmount();
       int amountFound = 0;
       for (ItemStack item : player.getInventory().getContents()) {
-        if (checkItem(player, dummyIcon, item, requiredItem.oldCheck)) {
+        if (checkItem(player, dummyIcon, item, requiredItem.isOldCheck())) {
           amountFound += item.getAmount();
         }
       }
@@ -80,12 +79,12 @@ public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
   @Override
   public void take(Player player) {
     for (RequiredItem requiredItem : getParsedValue(player)) {
-      DummyIcon dummyIcon = requiredItem.icon;
+      DummyIcon dummyIcon = requiredItem.getIcon();
       ItemStack[] contents = player.getInventory().getContents();
-      int amountNeeded = requiredItem.amount;
+      int amountNeeded = requiredItem.getAmount();
       for (int i = 0; i < contents.length; i++) {
         ItemStack item = contents[i];
-        if (checkItem(player, dummyIcon, item, requiredItem.oldCheck)) {
+        if (checkItem(player, dummyIcon, item, requiredItem.isOldCheck())) {
           if (item.getAmount() > amountNeeded) {
             item.setAmount(item.getAmount() - amountNeeded);
             return;
@@ -117,23 +116,6 @@ public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
         }
       }
       return true;
-    }
-  }
-
-  protected static class RequiredItem {
-
-    private final DummyIcon icon;
-    private final boolean oldCheck;
-    private int amount;
-
-    RequiredItem(Player player, DummyIcon icon, boolean oldCheck) {
-      this.icon = icon;
-      this.amount = icon.createClickableItem(player).get().getItem().getAmount();
-      this.oldCheck = oldCheck;
-    }
-
-    public void setAmount(int amount) {
-      this.amount = amount;
     }
   }
 }

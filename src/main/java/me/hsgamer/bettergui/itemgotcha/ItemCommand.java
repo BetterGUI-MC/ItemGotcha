@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
-import me.hsgamer.bettergui.config.impl.MessageConfig.DefaultMessage;
+import me.hsgamer.bettergui.config.impl.MessageConfig;
 import me.hsgamer.bettergui.lib.taskchain.TaskChain;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
 import me.hsgamer.bettergui.object.Command;
@@ -35,8 +35,7 @@ public class ItemCommand extends Command {
         amount = optional.get().intValue();
       } else {
         CommonUtils.sendMessage(player,
-            getInstance().getMessageConfig().get(DefaultMessage.INVALID_NUMBER)
-                .replace("{input}", split[1]));
+            MessageConfig.INVALID_NUMBER.getValue().replace("{input}", split[1]));
       }
     }
 
@@ -68,8 +67,7 @@ public class ItemCommand extends Command {
       taskChain.sync(() -> player.getInventory().addItem(itemStack));
     } else {
       getInstance().getLogger().log(Level.WARNING, "Invalid item on {0}", parsed);
-      CommonUtils
-          .sendMessage(player, Main.getFailMessage());
+      CommonUtils.sendMessage(player, Main.INVALID_ITEM.getValue());
     }
   }
 }

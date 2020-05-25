@@ -30,7 +30,7 @@ public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
       if (optional.isPresent()) {
         list.add(optional.get());
       } else {
-        CommonUtils.sendMessage(player, Main.getFailMessage());
+        CommonUtils.sendMessage(player, Main.INVALID_ITEM.getValue());
       }
     }
     return list;

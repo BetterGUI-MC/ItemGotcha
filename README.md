@@ -73,5 +73,6 @@ test-itemgotcha:
   slot: 1
   type: itemgotcha
   icon: stone # name of the item from the ItemGotcha config
+  command: "telll: &aI'm a stone"
 ```
 ***

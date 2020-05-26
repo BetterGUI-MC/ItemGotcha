@@ -11,6 +11,18 @@ Commands and Requirements related to Item
 * All the icons in this file are Dummy Icons.
 ### Usage
 * Similar settings as other menus
+```yaml
+stone:
+  id: STONE
+  amount: 32
+
+advanced_stone:
+  id: STONE
+  amount: "32 + 5"
+  name: "&c{player}'s Stone"
+  lore:
+  - "A dummy Stone"
+```
 ***
 ## Addon Command
 | Command | Permission | Description |
@@ -51,5 +63,15 @@ item:
   - "stone:true"
   - "cobblestone"
   take: false
+```
+***
+## Icon Type
+* This addon also gives an icon type called `itemgotcha`, which represents the item from ItemGotcha's config
+* Example on a menu:
+```yaml
+test-itemgotcha:
+  slot: 1
+  type: itemgotcha
+  icon: stone # name of the item from the ItemGotcha config
 ```
 ***

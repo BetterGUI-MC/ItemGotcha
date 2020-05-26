@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.Permissions;
 import me.hsgamer.bettergui.builder.CommandBuilder;
+import me.hsgamer.bettergui.builder.IconBuilder;
 import me.hsgamer.bettergui.builder.RequirementBuilder;
 import me.hsgamer.bettergui.config.ConfigPath;
 import me.hsgamer.bettergui.config.impl.MessageConfig;
@@ -47,6 +48,7 @@ public final class Main extends Addon {
 
     RequirementBuilder.register("item", ItemRequirement.class);
     CommandBuilder.register("give:", ItemCommand.class);
+    IconBuilder.register("itemgotcha", IconType.class);
 
     registerCommand(new BukkitCommand("items",
         "Open the inventory that contains all items from items.yml", "/items",

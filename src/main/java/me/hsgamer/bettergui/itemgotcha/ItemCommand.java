@@ -3,14 +3,12 @@ package me.hsgamer.bettergui.itemgotcha;
 import static me.hsgamer.bettergui.BetterGUI.getInstance;
 
 import java.math.BigDecimal;
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import me.hsgamer.bettergui.config.impl.MessageConfig;
 import me.hsgamer.bettergui.lib.taskchain.TaskChain;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
 import me.hsgamer.bettergui.object.Command;
-import me.hsgamer.bettergui.object.icon.DummyIcon;
 import me.hsgamer.bettergui.util.CommonUtils;
 import me.hsgamer.bettergui.util.Validate;
 import org.bukkit.entity.Player;
@@ -18,16 +16,23 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemCommand extends Command {
 
-  private final Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
-
   public ItemCommand(String command) {
     super(command);
   }
 
   private ItemStack getItemStack(Player player, String input) {
+    Optional<RequiredItem> optionalRequiredItem = RequiredItem.getRequiredItem(input, player);
+    if (optionalRequiredItem.isPresent()) {
+      RequiredItem requiredItem = optionalRequiredItem.get();
+      ItemStack itemStack = requiredItem.getIcon().createClickableItem(player).get().getItem();
+      itemStack.setAmount(requiredItem.getAmount());
+      return itemStack;
+    }
+
+    // Material
     int amount = 0;
     String[] split = input.split(",", 2);
-    String item = split[0].trim();
+    String mat = split[0].trim();
 
     if (split.length > 1) {
       Optional<BigDecimal> optional = Validate.getNumber(split[1].trim());
@@ -39,21 +44,13 @@ public class ItemCommand extends Command {
       }
     }
 
-    if (icons.containsKey(item)) {
-      ItemStack itemStack = icons.get(item).createClickableItem(player).get().getItem();
-      if (amount > 0) {
+    Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(mat);
+    if (xMaterial.isPresent()) {
+      ItemStack itemStack = xMaterial.get().parseItem();
+      amount = amount > 0 ? amount : 1;
+      if (itemStack != null) {
         itemStack.setAmount(amount);
-      }
-      return itemStack;
-    } else {
-      Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(item);
-      if (xMaterial.isPresent()) {
-        ItemStack itemStack = xMaterial.get().parseItem();
-        amount = amount > 0 ? amount : 1;
-        if (itemStack != null) {
-          itemStack.setAmount(amount);
-          return itemStack;
-        }
+        return itemStack;
       }
     }
     return null;

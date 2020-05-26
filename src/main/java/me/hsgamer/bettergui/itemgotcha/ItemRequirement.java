@@ -2,7 +2,6 @@ package me.hsgamer.bettergui.itemgotcha;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
 import me.hsgamer.bettergui.object.Requirement;
@@ -10,13 +9,10 @@ import me.hsgamer.bettergui.object.icon.DummyIcon;
 import me.hsgamer.bettergui.object.property.item.ItemProperty;
 import me.hsgamer.bettergui.object.property.item.impl.Amount;
 import me.hsgamer.bettergui.util.CommonUtils;
-import me.hsgamer.bettergui.util.Validate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
-
-  private final Map<String, DummyIcon> icons = Main.getItemManager().getMenu().getIcons();
 
   public ItemRequirement() {
     super(true);
@@ -26,7 +22,7 @@ public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
   public List<RequiredItem> getParsedValue(Player player) {
     List<RequiredItem> list = new ArrayList<>();
     for (String s : CommonUtils.createStringListFromObject(value, true)) {
-      Optional<RequiredItem> optional = getRequiredItem(s, player);
+      Optional<RequiredItem> optional = RequiredItem.getRequiredItem(s, player);
       if (optional.isPresent()) {
         list.add(optional.get());
       } else {
@@ -36,27 +32,6 @@ public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
     return list;
   }
 
-  private Optional<RequiredItem> getRequiredItem(String input, Player player) {
-    boolean oldCheck = true;
-    String[] split = input.split(":", 2);
-    String item = split[0].trim();
-    if (split.length > 1) {
-      oldCheck = Boolean.parseBoolean(split[1].trim());
-    }
-
-    String[] split1 = item.split(",", 2);
-    split1[0] = split1[0].trim();
-    if (icons.containsKey(split1[0])) {
-      RequiredItem requiredItem = new RequiredItem(player, icons.get(split1[0]), oldCheck);
-      if (split1.length > 1) {
-        Validate.getNumber(split1[1].trim())
-            .ifPresent(number -> requiredItem.setAmount(number.intValue()));
-      }
-      return Optional.of(requiredItem);
-    } else {
-      return Optional.empty();
-    }
-  }
 
   @Override
   public boolean check(Player player) {

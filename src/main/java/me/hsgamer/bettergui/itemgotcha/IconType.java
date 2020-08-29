@@ -12,7 +12,6 @@ import me.hsgamer.bettergui.object.property.icon.impl.ViewRequirement;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("unused")
 public class IconType extends Icon {
 
   private final List<UUID> failToCreate = new ArrayList<>();

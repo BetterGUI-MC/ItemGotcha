@@ -5,12 +5,12 @@ import static me.hsgamer.bettergui.BetterGUI.getInstance;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.logging.Level;
-import me.hsgamer.bettergui.config.impl.MessageConfig;
+import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.bettergui.lib.taskchain.TaskChain;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
 import me.hsgamer.bettergui.object.Command;
-import me.hsgamer.bettergui.util.CommonUtils;
-import me.hsgamer.bettergui.util.Validate;
+import me.hsgamer.bettergui.util.MessageUtils;
+import me.hsgamer.bettergui.util.common.Validate;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,7 +39,7 @@ public class ItemCommand extends Command {
       if (optional.isPresent()) {
         amount = optional.get().intValue();
       } else {
-        CommonUtils.sendMessage(player,
+        MessageUtils.sendMessage(player,
             MessageConfig.INVALID_NUMBER.getValue().replace("{input}", split[1]));
       }
     }
@@ -64,7 +64,7 @@ public class ItemCommand extends Command {
       taskChain.sync(() -> player.getInventory().addItem(itemStack));
     } else {
       getInstance().getLogger().log(Level.WARNING, "Invalid item on {0}", parsed);
-      CommonUtils.sendMessage(player, Main.INVALID_ITEM.getValue());
+      MessageUtils.sendMessage(player, Main.INVALID_ITEM.getValue());
     }
   }
 }

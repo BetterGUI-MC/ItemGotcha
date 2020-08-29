@@ -3,7 +3,7 @@ package me.hsgamer.bettergui.itemgotcha;
 import java.util.Map;
 import java.util.Optional;
 import me.hsgamer.bettergui.object.icon.DummyIcon;
-import me.hsgamer.bettergui.util.Validate;
+import me.hsgamer.bettergui.util.common.Validate;
 import org.bukkit.entity.Player;
 
 public class RequiredItem {

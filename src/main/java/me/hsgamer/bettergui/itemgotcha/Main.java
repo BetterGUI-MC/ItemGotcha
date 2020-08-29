@@ -1,16 +1,17 @@
 package me.hsgamer.bettergui.itemgotcha;
 
+import static me.hsgamer.bettergui.BetterGUI.getInstance;
+
 import java.util.ArrayList;
-import me.hsgamer.bettergui.BetterGUI;
-import me.hsgamer.bettergui.Permissions;
 import me.hsgamer.bettergui.builder.CommandBuilder;
 import me.hsgamer.bettergui.builder.IconBuilder;
 import me.hsgamer.bettergui.builder.RequirementBuilder;
-import me.hsgamer.bettergui.config.ConfigPath;
-import me.hsgamer.bettergui.config.impl.MessageConfig;
+import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.bettergui.object.addon.Addon;
 import me.hsgamer.bettergui.object.icon.DummyIcon;
-import me.hsgamer.bettergui.util.CommonUtils;
+import me.hsgamer.bettergui.util.MessageUtils;
+import me.hsgamer.bettergui.util.PermissionUtils;
+import me.hsgamer.bettergui.util.config.path.StringConfigPath;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
@@ -19,13 +20,13 @@ import org.bukkit.permissions.PermissionDefault;
 
 public final class Main extends Addon {
 
-  public static final ConfigPath<String> INVALID_ITEM = new ConfigPath<>(String.class,
+  public static final StringConfigPath INVALID_ITEM = new StringConfigPath(
       "invalid-item", "&cUnable to get required item. Inform the staff");
-  public static final ConfigPath<String> ITEM_REQUIRED = new ConfigPath<>(String.class,
+  public static final StringConfigPath ITEM_REQUIRED = new StringConfigPath(
       "item-required", "&cYou should specify an item");
 
-  public static final Permission PERMISSION = Permissions
-      .createPermission(BetterGUI.getInstance().getName().toLowerCase() + ".items", null,
+  public static final Permission PERMISSION = PermissionUtils
+      .createPermission(getInstance().getName().toLowerCase() + ".items", null,
           PermissionDefault.OP);
   private static ItemManager itemManager;
 
@@ -36,9 +37,9 @@ public final class Main extends Addon {
   @Override
   public boolean onLoad() {
     setupConfig();
-    INVALID_ITEM.setConfig(getPlugin().getMessageConfig());
-    ITEM_REQUIRED.setConfig(getPlugin().getMessageConfig());
-    getPlugin().getMessageConfig().saveConfig();
+    INVALID_ITEM.setConfig(getInstance().getMessageConfig());
+    ITEM_REQUIRED.setConfig(getInstance().getMessageConfig());
+    getInstance().getMessageConfig().saveConfig();
     return true;
   }
 
@@ -46,9 +47,9 @@ public final class Main extends Addon {
   public void onEnable() {
     itemManager = new ItemManager(this);
 
-    RequirementBuilder.register("item", ItemRequirement.class);
-    CommandBuilder.register("give:", ItemCommand.class);
-    IconBuilder.register("itemgotcha", IconType.class);
+    RequirementBuilder.register(ItemRequirement::new, "item");
+    CommandBuilder.register(ItemCommand::new, "give:");
+    IconBuilder.register(IconType::new, "itemgotcha");
 
     registerCommand(new BukkitCommand("items",
         "Open the inventory that contains all items from items.yml", "/items",
@@ -56,7 +57,7 @@ public final class Main extends Addon {
       @Override
       public boolean execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player)) {
-          CommonUtils.sendMessage(commandSender, MessageConfig.PLAYER_ONLY.getValue());
+          MessageUtils.sendMessage(commandSender, MessageConfig.PLAYER_ONLY.getValue());
           return false;
         }
         itemManager.createMenu((Player) commandSender);
@@ -69,24 +70,24 @@ public final class Main extends Addon {
       @Override
       public boolean execute(CommandSender commandSender, String s, String[] strings) {
         if (!(commandSender instanceof Player)) {
-          CommonUtils.sendMessage(commandSender, MessageConfig.PLAYER_ONLY.getValue());
+          MessageUtils.sendMessage(commandSender, MessageConfig.PLAYER_ONLY.getValue());
           return false;
         }
         if (!commandSender.hasPermission(PERMISSION)) {
-          CommonUtils.sendMessage(commandSender, MessageConfig.NO_PERMISSION.getValue());
+          MessageUtils.sendMessage(commandSender, MessageConfig.NO_PERMISSION.getValue());
           return false;
         }
         if (strings.length <= 0) {
-          CommonUtils.sendMessage(commandSender, ITEM_REQUIRED.getValue());
+          MessageUtils.sendMessage(commandSender, ITEM_REQUIRED.getValue());
           return false;
         }
         DummyIcon icon = itemManager.getMenu().getIcons().get(strings[0]);
         if (icon != null) {
           ((Player) commandSender).getInventory().addItem(icon.createClickableItem(
               (Player) commandSender).get().getItem());
-          CommonUtils.sendMessage(commandSender, MessageConfig.SUCCESS.getValue());
+          MessageUtils.sendMessage(commandSender, MessageConfig.SUCCESS.getValue());
         } else {
-          CommonUtils.sendMessage(commandSender, INVALID_ITEM.getValue());
+          MessageUtils.sendMessage(commandSender, INVALID_ITEM.getValue());
           return false;
         }
         return true;

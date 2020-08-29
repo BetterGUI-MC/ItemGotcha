@@ -8,7 +8,8 @@ import me.hsgamer.bettergui.object.Requirement;
 import me.hsgamer.bettergui.object.icon.DummyIcon;
 import me.hsgamer.bettergui.object.property.item.ItemProperty;
 import me.hsgamer.bettergui.object.property.item.impl.Amount;
-import me.hsgamer.bettergui.util.CommonUtils;
+import me.hsgamer.bettergui.util.MessageUtils;
+import me.hsgamer.bettergui.util.common.CommonUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,7 +27,7 @@ public class ItemRequirement extends Requirement<Object, List<RequiredItem>> {
       if (optional.isPresent()) {
         list.add(optional.get());
       } else {
-        CommonUtils.sendMessage(player, Main.INVALID_ITEM.getValue());
+        MessageUtils.sendMessage(player, Main.INVALID_ITEM.getValue());
       }
     }
     return list;

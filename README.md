@@ -1,6 +1,6 @@
 # ItemGotcha
 
-Commands and Requirements related to Item
+Actions and Requirements related to Item
 
 ## config.yml
 
@@ -9,12 +9,6 @@ Commands and Requirements related to Item
 * **`config.yml` is a special file. It contains all the icons that are used in `give:` and `Item Requirement`**
 
 ***
-
-### Info
-
-* Is a Dummy Menu
-* Can be opened by using `/items`
-* All the icons in this file are Dummy Icons.
 
 ### Usage
 
@@ -35,18 +29,17 @@ advanced_stone:
 
 ***
 
-## Addon Command
+## Command
 
 | Command | Permission | Description |
 | --- | --- | --- |
-| `items` | bettergui.items | Open the inventory that contains all items from config.yml |
 | `giveitem` | bettergui.items | Give an item to the player |
 
 ***
 
-## Command Type
+## Action
 
-| Command | Description | Argument | Example |
+| Action | Description | Argument | Example |
 | ------- | ----------- | -------- | ------- |
 | `give: <item>` | Give the item to the player | `<item>` <br> use the format `<material>` <br> or `<material>, <amount>` <br> where `<material>` is the item in `config.yml` or the [Material](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html) | `give: test` <br> <br> `give: test, 10`  <br> <br> `give: DIAMOND_SWORD` <br> <br> `give: STONE, 10`
 
@@ -86,21 +79,6 @@ item:
   - "stone:true"
   - "cobblestone"
   take: false
-```
-
-***
-
-## Icon Type
-
-* This addon also gives an icon type called `itemgotcha`, which represents the item from ItemGotcha's config
-* Example on a menu:
-
-```yaml
-test-itemgotcha:
-  slot: 1
-  type: itemgotcha
-  icon: stone # name of the item from the ItemGotcha config
-  command: "telll: &aI'm a stone"
 ```
 
 ***

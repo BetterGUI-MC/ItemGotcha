@@ -16,7 +16,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static me.hsgamer.bettergui.BetterGUI.getInstance;
@@ -82,6 +84,14 @@ public final class Main extends BetterGUIAddon {
                     return false;
                 }
                 return true;
+            }
+
+            @Override
+            public List<String> tabComplete(CommandSender commandSender, String s, String[] strings) {
+                if (strings.length == 1) {
+                    return new ArrayList<>(Manager.getRequiredItemMap().keySet());
+                }
+                return super.tabComplete(commandSender, s, strings);
             }
         };
         registerCommand(giveCommand);

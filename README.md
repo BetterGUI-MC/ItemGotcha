@@ -28,6 +28,7 @@ advanced_stone:
 ```
 ## Command
 > Just a simple command to get yourself the items you made
+
 | Command | Permission | Description |
 | --- | --- | --- |
 | `giveitem` | bettergui.items | Give an item to the player |

@@ -5,7 +5,6 @@ import me.hsgamer.bettergui.builder.ActionBuilder;
 import me.hsgamer.bettergui.builder.RequirementBuilder;
 import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.bettergui.lib.core.bukkit.utils.MessageUtils;
-import me.hsgamer.bettergui.lib.core.bukkit.utils.PermissionUtils;
 import me.hsgamer.bettergui.lib.core.config.path.StringConfigPath;
 import me.hsgamer.bettergui.lib.core.variable.VariableManager;
 import org.bukkit.Bukkit;
@@ -29,19 +28,19 @@ public final class Main extends BetterGUIAddon {
     public static final StringConfigPath ITEM_REQUIRED = new StringConfigPath("item-required", "&cYou should specify an item");
     public static final StringConfigPath CHECK_ITEM_SUCCESS = new StringConfigPath("check-item-success", "&a✓");
     public static final StringConfigPath CHECK_ITEM_FAILED = new StringConfigPath("check-item-failed", "&c✗");
-    public static final Permission PERMISSION = PermissionUtils.createPermission(getInstance().getName().toLowerCase() + ".items", null, PermissionDefault.OP);
+    public static final Permission PERMISSION = new Permission(getInstance().getName().toLowerCase() + ".items", null, PermissionDefault.OP);
     private Command giveCommand;
 
     @Override
     public boolean onLoad() {
         setupConfig();
-        Manager.setConfig(getAddonConfig());
+        Manager.setConfig(getConfig());
 
         INVALID_ITEM.setConfig(getInstance().getMessageConfig());
         ITEM_REQUIRED.setConfig(getInstance().getMessageConfig());
         CHECK_ITEM_SUCCESS.setConfig(getInstance().getMessageConfig());
         CHECK_ITEM_FAILED.setConfig(getInstance().getMessageConfig());
-        getInstance().getMessageConfig().saveConfig();
+        getInstance().getMessageConfig().save();
         return true;
     }
 

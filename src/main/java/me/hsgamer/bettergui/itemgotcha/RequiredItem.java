@@ -3,12 +3,13 @@ package me.hsgamer.bettergui.itemgotcha;
 import me.hsgamer.bettergui.builder.ItemModifierBuilder;
 import me.hsgamer.bettergui.lib.core.bukkit.item.ItemBuilder;
 import me.hsgamer.bettergui.lib.core.bukkit.item.ItemModifier;
-import me.hsgamer.bettergui.lib.simpleyaml.configuration.ConfigurationSection;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
 import me.hsgamer.bettergui.modifier.AmountModifier;
 import me.hsgamer.bettergui.utils.CommonStringReplacers;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 public class RequiredItem {
     private final ItemBuilder itemBuilder = new ItemBuilder()
@@ -16,7 +17,7 @@ public class RequiredItem {
             .addStringReplacer("colorize", CommonStringReplacers.COLORIZE)
             .addStringReplacer("expression", CommonStringReplacers.EXPRESSION);
 
-    public RequiredItem(ConfigurationSection section) {
+    public RequiredItem(Map<String, Object> section) {
         ItemModifierBuilder.INSTANCE.getItemModifiers(section).forEach(this.itemBuilder::addItemModifier);
     }
 

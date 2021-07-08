@@ -2,7 +2,6 @@ package me.hsgamer.bettergui.itemgotcha;
 
 import me.hsgamer.bettergui.lib.core.collections.map.CaseInsensitiveStringHashMap;
 import me.hsgamer.bettergui.lib.core.config.Config;
-import me.hsgamer.bettergui.lib.simpleyaml.configuration.ConfigurationSection;
 
 import java.util.Collections;
 import java.util.Map;
@@ -21,11 +20,11 @@ public class Manager {
     }
 
     public static void load() {
-        config.getConfig().getValues(false).forEach((key, value) -> {
-            if (!(value instanceof ConfigurationSection)) {
-                return;
+        config.getNormalizedValues(false).forEach((key, value) -> {
+            if (value instanceof Map) {
+                // noinspection unchecked
+                requiredItemMap.put(key, new RequiredItem((Map<String, Object>) value));
             }
-            requiredItemMap.put(key, new RequiredItem((ConfigurationSection) value));
         });
     }
 

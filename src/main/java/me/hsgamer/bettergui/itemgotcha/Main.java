@@ -21,7 +21,6 @@ public final class Main extends BetterGUIAddon {
 
     @Override
     public boolean onLoad() {
-        setupConfig();
         Manager.setConfig(getConfig());
 
         INVALID_ITEM.setConfig(getInstance().getMessageConfig());

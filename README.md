@@ -36,7 +36,7 @@ advanced_stone:
   lore:
     - "A dummy Stone"
     - ''
-    - '&kYes, it's very dummy and stupid'
+    - "&kYes, it's very dummy and stupid"
 ```
 
 ## Command
@@ -86,14 +86,12 @@ item:
 ```
 
 ```yaml
-item:
-  <item>, [amount]: [ format ]
+item: "<item>, [amount]: [format]"
 ```
 
 ```yaml
 item:
-  value:
-    <item>, [amount]: [ format ]
+  value: "<item>, [amount]: [format]"
   take: <true/false>
 ```
 

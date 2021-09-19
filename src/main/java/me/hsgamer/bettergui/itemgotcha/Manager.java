@@ -1,15 +1,16 @@
 package me.hsgamer.bettergui.itemgotcha;
 
-import me.hsgamer.bettergui.lib.core.collections.map.CaseInsensitiveStringHashMap;
+import me.hsgamer.bettergui.lib.core.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.bettergui.lib.core.config.Config;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Manager {
-    private static final Map<String, RequiredItem> requiredItemMap = new CaseInsensitiveStringHashMap<>();
+    private static final Map<String, RequiredItem> requiredItemMap = new CaseInsensitiveStringMap<>(new ConcurrentHashMap<>());
     private static Config config;
 
     private Manager() {

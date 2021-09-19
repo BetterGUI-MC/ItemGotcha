@@ -2,6 +2,7 @@ package me.hsgamer.bettergui.itemgotcha;
 
 import me.hsgamer.bettergui.lib.core.collections.map.CaseInsensitiveStringHashMap;
 import me.hsgamer.bettergui.lib.core.config.Config;
+import me.hsgamer.bettergui.lib.xseries.XMaterial;
 
 import java.util.Collections;
 import java.util.Map;
@@ -33,7 +34,17 @@ public class Manager {
     }
 
     public static Optional<RequiredItem> getRequiredItem(String name) {
-        return Optional.ofNullable(requiredItemMap.get(name));
+        RequiredItem requiredItem = requiredItemMap.get(name);
+        if (requiredItem != null) {
+            return Optional.of(requiredItem);
+        }
+        Optional<XMaterial> optionalXMaterial = XMaterial.matchXMaterial(name);
+        if (optionalXMaterial.isPresent()) {
+            RequiredItem materialRequiredItem = new RequiredItem(optionalXMaterial.get());
+            requiredItemMap.put(name, materialRequiredItem);
+            return Optional.of(materialRequiredItem);
+        }
+        return Optional.empty();
     }
 
     public static Map<String, RequiredItem> getRequiredItemMap() {

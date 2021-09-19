@@ -5,6 +5,7 @@ import me.hsgamer.bettergui.lib.core.bukkit.item.ItemBuilder;
 import me.hsgamer.bettergui.lib.core.bukkit.item.ItemModifier;
 import me.hsgamer.bettergui.lib.xseries.XMaterial;
 import me.hsgamer.bettergui.modifier.AmountModifier;
+import me.hsgamer.bettergui.modifier.XMaterialModifier;
 import me.hsgamer.bettergui.utils.CommonStringReplacers;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +20,12 @@ public class RequiredItem {
 
     public RequiredItem(Map<String, Object> section) {
         ItemModifierBuilder.INSTANCE.getItemModifiers(section).forEach(this.itemBuilder::addItemModifier);
+    }
+
+    public RequiredItem(XMaterial material) {
+        XMaterialModifier materialModifier = new XMaterialModifier();
+        materialModifier.loadFromObject(material.name());
+        itemBuilder.addItemModifier(materialModifier);
     }
 
     public ItemStack getItemStack(Player player, Integer amount) {

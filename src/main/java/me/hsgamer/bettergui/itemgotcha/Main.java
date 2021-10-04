@@ -2,6 +2,7 @@ package me.hsgamer.bettergui.itemgotcha;
 
 import me.hsgamer.bettergui.api.addon.BetterGUIAddon;
 import me.hsgamer.bettergui.builder.ActionBuilder;
+import me.hsgamer.bettergui.builder.ItemModifierBuilder;
 import me.hsgamer.bettergui.builder.RequirementBuilder;
 import me.hsgamer.bettergui.lib.core.config.path.StringConfigPath;
 import me.hsgamer.bettergui.lib.core.variable.VariableManager;
@@ -37,6 +38,7 @@ public final class Main extends BetterGUIAddon {
 
         ActionBuilder.INSTANCE.register(GiveItemAction::new, "give-item", "give");
         RequirementBuilder.INSTANCE.register(ItemRequirement::new, "item");
+        ItemModifierBuilder.INSTANCE.register(ItemGotchaModifier::new, "item-gotcha", "required-item");
 
         VariableManager.register("check_item_", (original, uuid) -> {
             Player player = Bukkit.getPlayer(uuid);

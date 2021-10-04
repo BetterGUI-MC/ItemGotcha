@@ -35,9 +35,9 @@ public class GiveItemCommand extends Command {
             MessageUtils.sendMessage(commandSender, Main.ITEM_REQUIRED.getValue());
             return false;
         }
-        Optional<RequiredItem> optional = Manager.getRequiredItem(strings[0]);
+        Optional<RequiredItemExecute> optional = RequiredItemExecute.get(String.join(" ", strings));
         if (optional.isPresent()) {
-            ((Player) commandSender).getInventory().addItem(optional.get().getItemStack((Player) commandSender, null));
+            ((Player) commandSender).getInventory().addItem(optional.get().getItemStack((Player) commandSender));
             MessageUtils.sendMessage(commandSender, MessageConfig.SUCCESS.getValue());
         } else {
             MessageUtils.sendMessage(commandSender, Main.INVALID_ITEM.getValue());

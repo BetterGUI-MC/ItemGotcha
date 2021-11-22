@@ -34,8 +34,6 @@ public final class Main extends BetterGUIAddon {
 
     @Override
     public void onEnable() {
-        Manager.load();
-
         ActionBuilder.INSTANCE.register(GiveItemAction::new, "give-item", "give");
         RequirementBuilder.INSTANCE.register(ItemRequirement::new, "item");
         ItemModifierBuilder.INSTANCE.register(ItemGotchaModifier::new, "item-gotcha", "required-item");
@@ -48,6 +46,11 @@ public final class Main extends BetterGUIAddon {
             return RequiredItemExecute.get(original).map(requiredItemExecute -> requiredItemExecute.check(player) ? CHECK_ITEM_SUCCESS.getValue() : CHECK_ITEM_FAILED.getValue()).orElse(null);
         });
         registerCommand(giveCommand);
+    }
+
+    @Override
+    public void onPostEnable() {
+        Manager.load();
     }
 
     @Override

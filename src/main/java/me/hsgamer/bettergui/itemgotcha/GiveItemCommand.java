@@ -1,8 +1,8 @@
 package me.hsgamer.bettergui.itemgotcha;
 
+import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.Permissions;
-import me.hsgamer.bettergui.config.MessageConfig;
-import me.hsgamer.bettergui.lib.core.bukkit.utils.MessageUtils;
+import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,7 +12,6 @@ import org.bukkit.permissions.PermissionDefault;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class GiveItemCommand extends Command {
     private static final Permission PERMISSION = new Permission(Permissions.PREFIX + ".items", null, PermissionDefault.OP);
@@ -28,21 +27,15 @@ public class GiveItemCommand extends Command {
             return false;
         }
         if (!(commandSender instanceof Player)) {
-            MessageUtils.sendMessage(commandSender, MessageConfig.PLAYER_ONLY.getValue());
+            MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().getMessageConfig().playerOnly);
             return false;
         }
-        if (strings.length <= 0) {
-            MessageUtils.sendMessage(commandSender, Main.ITEM_REQUIRED.getValue());
+        if (strings.length == 0) {
+            MessageUtils.sendMessage(commandSender, getUsage());
             return false;
         }
-        Optional<RequiredItemExecute> optional = RequiredItemExecute.get(String.join(" ", strings));
-        if (optional.isPresent()) {
-            ((Player) commandSender).getInventory().addItem(optional.get().getItemStack((Player) commandSender));
-            MessageUtils.sendMessage(commandSender, MessageConfig.SUCCESS.getValue());
-        } else {
-            MessageUtils.sendMessage(commandSender, Main.INVALID_ITEM.getValue());
-            return false;
-        }
+        RequiredItemExecute.get(String.join(" ", strings)).giveItem((Player) commandSender);
+        MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().getMessageConfig().success);
         return true;
     }
 

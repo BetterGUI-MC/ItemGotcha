@@ -1,9 +1,8 @@
 package me.hsgamer.bettergui.itemgotcha;
 
+import me.hsgamer.hscore.bukkit.utils.ItemUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Optional;
 
 public class RequiredItemExecute {
     private final RequiredItem requiredItem;
@@ -16,7 +15,7 @@ public class RequiredItemExecute {
         this.amount = amount;
     }
 
-    public static Optional<RequiredItemExecute> get(String input) {
+    public static RequiredItemExecute get(String input) {
         boolean oldCheck = true;
         String[] split = input.split(":", 2);
         String item = split[0].trim();
@@ -25,20 +24,15 @@ public class RequiredItemExecute {
         }
 
         String[] split1 = item.split(",", 2);
-        Optional<RequiredItem> optional = Manager.getRequiredItem(split1[0].trim());
-        if (optional.isPresent()) {
-            Integer amount = null;
-            if (split1.length > 1) {
-                try {
-                    amount = Integer.parseInt(split1[1].trim());
-                } catch (Exception e) {
-                    // IGNORED
-                }
+        Integer amount = null;
+        if (split1.length > 1) {
+            try {
+                amount = Integer.parseInt(split1[1].trim());
+            } catch (Exception e) {
+                // IGNORED
             }
-            return Optional.of(new RequiredItemExecute(optional.get(), oldCheck, amount));
-        } else {
-            return Optional.empty();
         }
+        return new RequiredItemExecute(Manager.getRequiredItem(split1[0].trim()), oldCheck, amount);
     }
 
     public boolean isOldCheck() {
@@ -53,15 +47,15 @@ public class RequiredItemExecute {
         return requiredItem;
     }
 
-    public boolean check(Player player) {
-        return requiredItem.check(player, oldCheck, amount);
-    }
-
-    public void take(Player player) {
-        requiredItem.take(player, oldCheck, amount);
+    public ItemUtils.ItemCheckSession createSession(Player player) {
+        return requiredItem.createSession(player, oldCheck, amount);
     }
 
     public ItemStack getItemStack(Player player) {
         return requiredItem.getItemStack(player, amount);
+    }
+
+    public void giveItem(Player player) {
+        ItemUtils.giveItem(player, getItemStack(player));
     }
 }

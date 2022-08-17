@@ -1,7 +1,7 @@
 package me.hsgamer.bettergui.itemgotcha;
 
-import me.hsgamer.bettergui.lib.core.bukkit.item.ItemModifier;
-import me.hsgamer.bettergui.lib.core.common.interfaces.StringReplacer;
+import me.hsgamer.hscore.bukkit.item.ItemModifier;
+import me.hsgamer.hscore.common.interfaces.StringReplacer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -23,9 +23,7 @@ public class ItemGotchaModifier implements ItemModifier {
         if (player == null) {
             return itemStack;
         }
-        return RequiredItemExecute.get(StringReplacer.replace(name, uuid, map.values()))
-                .map(requiredItemExecute -> requiredItemExecute.getItemStack(player))
-                .orElse(itemStack);
+        return RequiredItemExecute.get(StringReplacer.replace(name, uuid, map.values())).getItemStack(player);
     }
 
     @Override

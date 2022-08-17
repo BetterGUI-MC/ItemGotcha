@@ -1,19 +1,22 @@
 package me.hsgamer.bettergui.itemgotcha;
 
+import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.api.requirement.TakableRequirement;
-import me.hsgamer.bettergui.lib.core.common.CollectionUtils;
-import me.hsgamer.bettergui.lib.core.variable.VariableManager;
+import me.hsgamer.bettergui.builder.RequirementBuilder;
+import me.hsgamer.bettergui.util.StringReplacerApplier;
+import me.hsgamer.hscore.bukkit.utils.ItemUtils;
+import me.hsgamer.hscore.common.CollectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class ItemRequirement extends TakableRequirement<List<RequiredItemExecute>> {
-    private final Map<UUID, List<RequiredItemExecute>> checked = new HashMap<>();
-
-    public ItemRequirement(String name) {
-        super(name);
+public class ItemRequirement extends TakableRequirement<List<ItemUtils.ItemCheckSession>> {
+    public ItemRequirement(RequirementBuilder.Input input) {
+        super(input);
     }
 
     @Override
@@ -27,36 +30,35 @@ public class ItemRequirement extends TakableRequirement<List<RequiredItemExecute
     }
 
     @Override
-    public List<RequiredItemExecute> getParsedValue(UUID uuid) {
+    protected List<ItemUtils.ItemCheckSession> convert(Object value, UUID uuid) {
         List<String> list = CollectionUtils.createStringListFromObject(value, true);
-        list.replaceAll(s -> VariableManager.setVariables(s, uuid));
-        return list.stream().map(RequiredItemExecute::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+        list.replaceAll(s -> StringReplacerApplier.replace(s, uuid, this));
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null) {
+            return Collections.emptyList();
+        }
+        return list.stream()
+                .map(RequiredItemExecute::get)
+                .map(requiredItemExecute -> requiredItemExecute.createSession(player))
+                .collect(Collectors.toList());
     }
 
     @Override
-    protected void takeChecked(UUID uuid) {
+    protected Result checkConverted(UUID uuid, List<ItemUtils.ItemCheckSession> value) {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
-            return;
+            return Result.success();
         }
-        for (RequiredItemExecute execute : checked.remove(uuid)) {
-            execute.take(player);
-        }
-    }
-
-    @Override
-    public boolean check(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player == null) {
-            return true;
-        }
-        List<RequiredItemExecute> list = getParsedValue(uuid);
-        for (RequiredItemExecute execute : list) {
-            if (!execute.check(player)) {
-                return false;
+        for (ItemUtils.ItemCheckSession session : value) {
+            if (!session.isAllMatched) {
+                return Result.fail();
             }
         }
-        checked.put(uuid, list);
-        return true;
+        return successConditional((uuid1, process) -> Bukkit.getScheduler().runTask(BetterGUI.getInstance(), () -> {
+            for (ItemUtils.ItemCheckSession session : value) {
+                session.takeRunnable.run();
+            }
+            process.next();
+        }));
     }
 }

@@ -1,17 +1,16 @@
 package me.hsgamer.bettergui.itemgotcha;
 
-import me.hsgamer.bettergui.lib.core.collections.map.CaseInsensitiveStringMap;
-import me.hsgamer.bettergui.lib.core.config.Config;
-import me.hsgamer.bettergui.lib.xseries.XMaterial;
+import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
+import me.hsgamer.hscore.config.Config;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Manager {
     private static final Map<String, RequiredItem> requiredItemMap = new CaseInsensitiveStringMap<>(new ConcurrentHashMap<>());
     private static Config config;
+    private static ExtraMessageConfig messageConfig;
 
     private Manager() {
         // EMPTY
@@ -19,6 +18,14 @@ public class Manager {
 
     public static void setConfig(Config config) {
         Manager.config = config;
+    }
+
+    public static ExtraMessageConfig getMessageConfig() {
+        return messageConfig;
+    }
+
+    public static void setMessageConfig(ExtraMessageConfig messageConfig) {
+        Manager.messageConfig = messageConfig;
     }
 
     public static void load() {
@@ -34,18 +41,8 @@ public class Manager {
         requiredItemMap.clear();
     }
 
-    public static Optional<RequiredItem> getRequiredItem(String name) {
-        RequiredItem requiredItem = requiredItemMap.get(name);
-        if (requiredItem != null) {
-            return Optional.of(requiredItem);
-        }
-        Optional<XMaterial> optionalXMaterial = XMaterial.matchXMaterial(name);
-        if (optionalXMaterial.isPresent()) {
-            RequiredItem materialRequiredItem = new RequiredItem(optionalXMaterial.get());
-            requiredItemMap.put(name, materialRequiredItem);
-            return Optional.of(materialRequiredItem);
-        }
-        return Optional.empty();
+    public static RequiredItem getRequiredItem(String name) {
+        return requiredItemMap.computeIfAbsent(name, RequiredItem::new);
     }
 
     public static Map<String, RequiredItem> getRequiredItemMap() {

@@ -1,34 +1,31 @@
 package me.hsgamer.bettergui.itemgotcha;
 
-import me.hsgamer.bettergui.api.addon.BetterGUIAddon;
+import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.builder.ActionBuilder;
 import me.hsgamer.bettergui.builder.ItemModifierBuilder;
 import me.hsgamer.bettergui.builder.RequirementBuilder;
-import me.hsgamer.bettergui.lib.core.config.path.StringConfigPath;
-import me.hsgamer.bettergui.lib.core.variable.VariableManager;
+import me.hsgamer.hscore.bukkit.addon.PluginAddon;
+import me.hsgamer.hscore.bukkit.config.BukkitConfig;
+import me.hsgamer.hscore.bukkit.utils.ItemUtils;
+import me.hsgamer.hscore.config.Config;
+import me.hsgamer.hscore.variable.VariableManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 
-import static me.hsgamer.bettergui.BetterGUI.getInstance;
+import java.io.File;
 
-public final class Main extends BetterGUIAddon {
-
-    public static final StringConfigPath INVALID_ITEM = new StringConfigPath("invalid-item", "&cUnable to get required item. Inform the staff");
-    public static final StringConfigPath ITEM_REQUIRED = new StringConfigPath("item-required", "&cYou should specify an item");
-    public static final StringConfigPath CHECK_ITEM_SUCCESS = new StringConfigPath("check-item-success", "&a✓");
-    public static final StringConfigPath CHECK_ITEM_FAILED = new StringConfigPath("check-item-failed", "&c✗");
+public final class Main extends PluginAddon {
     private final Command giveCommand = new GiveItemCommand();
+    private final Config mainConfig = new BukkitConfig(new File(getDataFolder(), "config.yml"));
+    private final ExtraMessageConfig messageConfig = new ExtraMessageConfig(new BukkitConfig(new File(getDataFolder(), "messages.yml")));
 
     @Override
     public boolean onLoad() {
-        Manager.setConfig(getConfig());
-
-        INVALID_ITEM.setConfig(getInstance().getMessageConfig());
-        ITEM_REQUIRED.setConfig(getInstance().getMessageConfig());
-        CHECK_ITEM_SUCCESS.setConfig(getInstance().getMessageConfig());
-        CHECK_ITEM_FAILED.setConfig(getInstance().getMessageConfig());
-        getInstance().getMessageConfig().save();
+        mainConfig.setup();
+        messageConfig.setup();
+        Manager.setConfig(mainConfig);
+        Manager.setMessageConfig(messageConfig);
         return true;
     }
 
@@ -43,9 +40,11 @@ public final class Main extends BetterGUIAddon {
             if (player == null) {
                 return "";
             }
-            return RequiredItemExecute.get(original).map(requiredItemExecute -> requiredItemExecute.check(player) ? CHECK_ITEM_SUCCESS.getValue() : CHECK_ITEM_FAILED.getValue()).orElse(null);
+            RequiredItemExecute execute = RequiredItemExecute.get(original);
+            ItemUtils.ItemCheckSession session = execute.createSession(player);
+            return session.isAllMatched ? messageConfig.checkItemSuccess : messageConfig.checkItemFailed;
         });
-        registerCommand(giveCommand);
+        BetterGUI.getInstance().getCommandManager().register(giveCommand);
     }
 
     @Override
@@ -56,13 +55,18 @@ public final class Main extends BetterGUIAddon {
     @Override
     public void onReload() {
         Manager.clear();
-        reloadConfig();
+        mainConfig.reload();
+        messageConfig.reload();
         Manager.load();
     }
 
     @Override
     public void onDisable() {
         Manager.clear();
-        unregisterCommand(giveCommand);
+        BetterGUI.getInstance().getCommandManager().unregister(giveCommand);
+    }
+
+    public ExtraMessageConfig getMessageConfig() {
+        return messageConfig;
     }
 }

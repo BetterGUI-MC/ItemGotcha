@@ -2,6 +2,7 @@ package me.hsgamer.bettergui.itemgotcha;
 
 import me.hsgamer.bettergui.api.action.BaseAction;
 import me.hsgamer.bettergui.builder.ActionBuilder;
+import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.task.element.TaskProcess;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -23,9 +24,6 @@ public class GiveItemAction extends BaseAction {
             process.next();
             return;
         }
-        Bukkit.getScheduler().runTask(getInstance(), () -> {
-            RequiredItemExecute.get(parsed).giveItem(player);
-            process.next();
-        });
+        Scheduler.CURRENT.runEntityTaskWithFinalizer(getInstance(), player, () -> RequiredItemExecute.get(parsed).giveItem(player), process::next, false);
     }
 }

@@ -9,8 +9,6 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import static me.hsgamer.bettergui.BetterGUI.getInstance;
-
 public class GiveItemAction extends BaseAction {
     public GiveItemAction(ActionBuilder.Input input) {
         super(input);
@@ -24,6 +22,6 @@ public class GiveItemAction extends BaseAction {
             process.next();
             return;
         }
-        Scheduler.CURRENT.runEntityTaskWithFinalizer(getInstance(), player, () -> RequiredItemExecute.get(parsed).giveItem(player), process::next, false);
+        Scheduler.current().sync().runEntityTaskWithFinalizer(player, () -> RequiredItemExecute.get(parsed).giveItem(player), process::next);
     }
 }

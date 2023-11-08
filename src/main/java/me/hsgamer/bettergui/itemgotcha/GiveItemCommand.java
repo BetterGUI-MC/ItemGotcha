@@ -27,7 +27,7 @@ public class GiveItemCommand extends Command {
             return false;
         }
         if (!(commandSender instanceof Player)) {
-            MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().getMessageConfig().playerOnly);
+            MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().getMessageConfig().getPlayerOnly());
             return false;
         }
         if (strings.length == 0) {
@@ -35,7 +35,7 @@ public class GiveItemCommand extends Command {
             return false;
         }
         RequiredItemExecute.get(String.join(" ", strings)).giveItem((Player) commandSender);
-        MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().getMessageConfig().success);
+        MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().getMessageConfig().getSuccess());
         return true;
     }
 

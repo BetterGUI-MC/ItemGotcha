@@ -1,29 +1,25 @@
 package me.hsgamer.bettergui.itemgotcha;
 
-import me.hsgamer.hscore.bukkit.item.ItemModifier;
-import me.hsgamer.hscore.common.interfaces.StringReplacer;
+import me.hsgamer.hscore.common.StringReplacer;
+import me.hsgamer.hscore.minecraft.item.ItemModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.Collection;
 import java.util.UUID;
 
-public class ItemGotchaModifier implements ItemModifier {
+public class ItemGotchaModifier implements ItemModifier<ItemStack> {
     private String name = "";
 
     @Override
-    public String getName() {
-        return "item-gotcha";
-    }
-
-    @Override
-    public ItemStack modify(ItemStack itemStack, UUID uuid, Map<String, StringReplacer> map) {
+    public @NotNull ItemStack modify(@NotNull ItemStack itemStack, UUID uuid, @NotNull Collection<StringReplacer> stringReplacers) {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
             return itemStack;
         }
-        return RequiredItemExecute.get(StringReplacer.replace(name, uuid, map.values())).getItemStack(player);
+        return RequiredItemExecute.get(StringReplacer.replace(name, uuid, stringReplacers)).getItemStack(player);
     }
 
     @Override
@@ -34,15 +30,5 @@ public class ItemGotchaModifier implements ItemModifier {
     @Override
     public void loadFromObject(Object o) {
         this.name = String.valueOf(o);
-    }
-
-    @Override
-    public void loadFromItemStack(ItemStack itemStack) {
-        // EMPTY
-    }
-
-    @Override
-    public boolean compareWithItemStack(ItemStack itemStack, UUID uuid, Map<String, StringReplacer> map) {
-        return false;
     }
 }

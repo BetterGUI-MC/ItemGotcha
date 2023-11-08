@@ -1,7 +1,9 @@
 package me.hsgamer.bettergui.itemgotcha;
 
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
+import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.config.Config;
+import me.hsgamer.hscore.config.PathString;
 
 import java.util.Collections;
 import java.util.Map;
@@ -29,12 +31,11 @@ public class Manager {
     }
 
     public static void load() {
-        config.getNormalizedValues(false).forEach((key, value) -> {
-            if (value instanceof Map) {
-                // noinspection unchecked
-                requiredItemMap.put(key, new RequiredItem((Map<String, Object>) value));
-            }
-        });
+        config.getNormalizedValues(false)
+                .forEach((key, value) -> MapUtils
+                        .castOptionalStringObjectMap(value)
+                        .ifPresent(map -> requiredItemMap.put(PathString.toPath(key), new RequiredItem(map)))
+                );
     }
 
     public static void clear() {

@@ -2,6 +2,7 @@ package me.hsgamer.bettergui.itemgotcha;
 
 import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.api.addon.GetPlugin;
+import me.hsgamer.bettergui.api.addon.PostEnable;
 import me.hsgamer.bettergui.api.addon.Reloadable;
 import me.hsgamer.bettergui.builder.ActionBuilder;
 import me.hsgamer.bettergui.builder.ItemModifierBuilder;
@@ -20,7 +21,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 
-public final class Main implements Expansion, DataFolder, GetPlugin, Reloadable {
+public final class Main implements Expansion, DataFolder, GetPlugin, Reloadable, PostEnable {
     private final Command giveCommand = new GiveItemCommand();
     private final Config mainConfig = new BukkitConfig(new File(getDataFolder(), "config.yml"));
     private final ExtraMessageConfig messageConfig = ConfigGenerator.newInstance(ExtraMessageConfig.class, new BukkitConfig(new File(getDataFolder(), "messages.yml")));
@@ -31,7 +32,11 @@ public final class Main implements Expansion, DataFolder, GetPlugin, Reloadable 
         mainConfig.setup();
         Manager.setConfig(mainConfig);
         Manager.setMessageConfig(messageConfig);
+        return true;
+    }
 
+    @Override
+    public void onEnable() {
         ActionBuilder.INSTANCE.register(GiveItemAction::new, "give-item", "give");
         RequirementBuilder.INSTANCE.register(ItemRequirement::new, "item");
         ItemModifierBuilder.INSTANCE.register(ItemGotchaModifier::new, "item-gotcha", "required-item");
@@ -46,11 +51,10 @@ public final class Main implements Expansion, DataFolder, GetPlugin, Reloadable 
             return session.isAllMatched ? messageConfig.getCheckItemSuccess() : messageConfig.getCheckItemFailed();
         }));
         getPlugin().getCommandManager().register(giveCommand);
-        return true;
     }
 
     @Override
-    public void onEnable() {
+    public void onPostEnable() {
         Manager.load();
     }
 

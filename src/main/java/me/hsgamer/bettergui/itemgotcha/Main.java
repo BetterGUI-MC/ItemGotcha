@@ -1,6 +1,6 @@
 package me.hsgamer.bettergui.itemgotcha;
 
-import me.hsgamer.bettergui.BetterGUI;
+import io.github.projectunified.minelib.plugin.command.CommandComponent;
 import me.hsgamer.bettergui.api.addon.GetPlugin;
 import me.hsgamer.bettergui.api.addon.PostEnable;
 import me.hsgamer.bettergui.api.addon.Reloadable;
@@ -50,7 +50,7 @@ public final class Main implements Expansion, DataFolder, GetPlugin, Reloadable,
             ItemUtils.ItemCheckSession session = execute.createSession(player);
             return session.isAllMatched ? messageConfig.getCheckItemSuccess() : messageConfig.getCheckItemFailed();
         }));
-        getPlugin().getCommandManager().register(giveCommand);
+        getPlugin().get(CommandComponent.class).register(giveCommand);
     }
 
     @Override
@@ -69,7 +69,7 @@ public final class Main implements Expansion, DataFolder, GetPlugin, Reloadable,
     @Override
     public void onDisable() {
         Manager.clear();
-        BetterGUI.getInstance().getCommandManager().unregister(giveCommand);
+        getPlugin().get(CommandComponent.class).unregister(giveCommand);
         variableBundle.unregisterAll();
     }
 

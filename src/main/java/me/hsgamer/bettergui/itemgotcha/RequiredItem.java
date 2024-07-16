@@ -6,6 +6,7 @@ import me.hsgamer.hscore.bukkit.item.BukkitItemBuilder;
 import me.hsgamer.hscore.bukkit.item.modifier.AmountModifier;
 import me.hsgamer.hscore.bukkit.item.modifier.MaterialModifier;
 import me.hsgamer.hscore.bukkit.utils.ItemUtils;
+import me.hsgamer.hscore.common.StringReplacer;
 import me.hsgamer.hscore.minecraft.item.ItemComparator;
 import me.hsgamer.hscore.minecraft.item.ItemModifier;
 import org.bukkit.entity.Player;
@@ -55,7 +56,7 @@ public class RequiredItem {
                 }
                 //noinspection unchecked
                 ItemComparator<ItemStack> itemComparator = (ItemComparator<ItemStack>) itemModifier;
-                if (!itemComparator.compare(itemStack, player.getUniqueId(), itemBuilder.getStringReplacers())) {
+                if (!itemComparator.compare(itemStack, player.getUniqueId(), StringReplacer.combine(itemBuilder.getStringReplacers()))) {
                     return false;
                 }
             }

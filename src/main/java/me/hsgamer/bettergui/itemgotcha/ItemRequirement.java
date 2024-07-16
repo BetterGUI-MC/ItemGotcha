@@ -2,8 +2,8 @@ package me.hsgamer.bettergui.itemgotcha;
 
 import me.hsgamer.bettergui.api.requirement.TakableRequirement;
 import me.hsgamer.bettergui.builder.RequirementBuilder;
+import me.hsgamer.bettergui.util.SchedulerUtil;
 import me.hsgamer.bettergui.util.StringReplacerApplier;
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
 import me.hsgamer.hscore.bukkit.utils.ItemUtils;
 import me.hsgamer.hscore.common.CollectionUtils;
 import org.bukkit.Bukkit;
@@ -54,9 +54,13 @@ public class ItemRequirement extends TakableRequirement<List<ItemUtils.ItemCheck
                 return Result.fail();
             }
         }
-        return successConditional((uuid1, process) -> Scheduler.current().sync().runEntityTaskWithFinalizer(player, () -> {
-            for (ItemUtils.ItemCheckSession session : value) {
-                session.takeRunnable.run();
+        return successConditional((uuid1, process) -> SchedulerUtil.entity(player).run(() -> {
+            try {
+                for (ItemUtils.ItemCheckSession session : value) {
+                    session.takeRunnable.run();
+                }
+            } finally {
+                process.next();
             }
         }, process::next));
     }

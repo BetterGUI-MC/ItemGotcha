@@ -2,6 +2,7 @@ package me.hsgamer.bettergui.itemgotcha;
 
 import me.hsgamer.bettergui.BetterGUI;
 import me.hsgamer.bettergui.Permissions;
+import me.hsgamer.bettergui.config.MessageConfig;
 import me.hsgamer.hscore.bukkit.utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -27,7 +28,7 @@ public class GiveItemCommand extends Command {
             return false;
         }
         if (!(commandSender instanceof Player)) {
-            MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().getMessageConfig().getPlayerOnly());
+            MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().get(MessageConfig.class).getPlayerOnly());
             return false;
         }
         if (strings.length == 0) {
@@ -35,7 +36,7 @@ public class GiveItemCommand extends Command {
             return false;
         }
         RequiredItemExecute.get(String.join(" ", strings)).giveItem((Player) commandSender);
-        MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().getMessageConfig().getSuccess());
+        MessageUtils.sendMessage(commandSender, BetterGUI.getInstance().get(MessageConfig.class).getSuccess());
         return true;
     }
 

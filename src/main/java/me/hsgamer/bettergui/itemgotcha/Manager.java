@@ -3,7 +3,6 @@ package me.hsgamer.bettergui.itemgotcha;
 import me.hsgamer.hscore.collections.map.CaseInsensitiveStringMap;
 import me.hsgamer.hscore.common.MapUtils;
 import me.hsgamer.hscore.config.Config;
-import me.hsgamer.hscore.config.PathString;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class Manager {
         config.getNormalizedValues(false)
                 .forEach((key, value) -> MapUtils
                         .castOptionalStringObjectMap(value)
-                        .ifPresent(map -> requiredItemMap.put(PathString.toPath(key), new RequiredItem(map)))
+                        .ifPresent(map -> requiredItemMap.put(key[0], new RequiredItem(map)))
                 );
     }
 

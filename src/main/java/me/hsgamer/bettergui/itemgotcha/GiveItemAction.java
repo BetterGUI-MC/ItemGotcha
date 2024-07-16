@@ -1,27 +1,37 @@
 package me.hsgamer.bettergui.itemgotcha;
 
-import me.hsgamer.bettergui.api.action.BaseAction;
 import me.hsgamer.bettergui.builder.ActionBuilder;
-import me.hsgamer.hscore.bukkit.scheduler.Scheduler;
+import me.hsgamer.bettergui.util.SchedulerUtil;
+import me.hsgamer.hscore.action.common.Action;
+import me.hsgamer.hscore.common.StringReplacer;
 import me.hsgamer.hscore.task.element.TaskProcess;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class GiveItemAction extends BaseAction {
+public class GiveItemAction implements Action {
+    private final String value;
+
     public GiveItemAction(ActionBuilder.Input input) {
-        super(input);
+        this.value = input.getValue();
     }
 
     @Override
-    public void accept(UUID uuid, TaskProcess process) {
-        String parsed = getReplacedString(uuid);
+    public void apply(UUID uuid, TaskProcess process, StringReplacer stringReplacer) {
+        String parsed = stringReplacer.replaceOrOriginal(value, uuid);
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
             process.next();
             return;
         }
-        Scheduler.current().sync().runEntityTaskWithFinalizer(player, () -> RequiredItemExecute.get(parsed).giveItem(player), process::next);
+        SchedulerUtil.entity(player)
+                .run(() -> {
+                    try {
+                        RequiredItemExecute.get(parsed).giveItem(player);
+                    } finally {
+                        process.next();
+                    }
+                }, process::next);
     }
 }
